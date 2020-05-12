@@ -1,13 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.kohsuke</groupId>
-    <artifactId>pom</artifactId>
-    <version>21</version>
-    <relativePath />
-  </parent>
-
+  <groupId>org.craftercms</groupId>
   <artifactId>groovy-sandbox</artifactId>
   <version>${revision}${changelist}</version>
 
@@ -16,8 +10,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.27</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <revision>1.27.1</revision>
+    <changelist></changelist>
     <!-- TODO: Move these three properties to the parent POM or use org.jenkins-ci:jenkins as the parent POM here -->
     <incrementals-enforce-minimum.version>1.1</incrementals-enforce-minimum.version>
     <incrementals-plugin.version>1.1</incrementals-plugin.version>
@@ -109,7 +103,8 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>2.4.12</version> <!-- Note: Do not update past 2.4.12 unless Jenkins core is updated to use a newer version of Groovy. -->
+      <version>2.4.15</version> <!-- Updated to use the same as Engine -->
+      <scope>provided</scope> <!-- Updated to avoid exclusions in other places -->
     </dependency>
     <dependency>
       <groupId>junit</groupId>
