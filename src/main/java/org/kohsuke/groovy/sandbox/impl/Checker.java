@@ -311,6 +311,14 @@ public class Checker {
     public static Object checkedGetProperty(final Object _receiver, boolean safe, boolean spread, Object _property) throws Throwable {
         if (safe && _receiver==null)     return null;
 
+        // Support DSL style no arg methods: [1, 2].size
+        if (_receiver != null) {
+            MetaMethod m = getMetaClass(_receiver).pickMethod(_property.toString(), new Class<?>[0]);
+            if (m != null) {
+                return checkedCall(_receiver, safe, spread, _property.toString(), new Object[0]);
+            }
+        }
+
         if (spread || (_receiver instanceof Collection && !BUILTIN_PROPERTIES.contains(_property))) {
             List<Object> r = new ArrayList<Object>();
             Iterator itr = InvokerHelper.asIterator(_receiver);
