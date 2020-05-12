@@ -7,6 +7,28 @@
 
   <name>Groovy Sandbox</name>
   <description>Executes untrusted Groovy script safely</description>
+  <url>https://github.com/craftercms/groovy-sandbox</url>
+
+  <organization>
+    <name>CrafterCMS</name>
+    <url>http://craftercms.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>MIT license</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>sumerjabri</id>
+      <name>Sumer Jabri</name>
+      <email>sumer.jabri@craftercms.org</email>
+    </developer>
+  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,6 +77,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
@@ -272,6 +295,30 @@
             </activation>
             <build>
                 <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-source-plugin</artifactId>
+                      <version>2.2.1</version>
+                      <executions>
+                        <execution>
+                          <id>attach-sources</id>
+                          <goals>
+                            <goal>jar</goal>
+                          </goals>
+                        </execution>
+                      </executions>
+                    </plugin>
+                    <plugin>
+                      <artifactId>maven-javadoc-plugin</artifactId>
+                      <executions>
+                        <execution>
+                          <id>attach-javadocs</id>
+                          <goals>
+                            <goal>jar</goal>
+                          </goals>
+                        </execution>
+                      </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-deploy-plugin</artifactId>
