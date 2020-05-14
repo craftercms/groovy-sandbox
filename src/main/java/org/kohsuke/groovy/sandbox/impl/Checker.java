@@ -142,6 +142,14 @@ public class Checker {
                 }
             }
 
+            // Support special one arg methods: obj.test() == obj.test(null)
+            if (_receiver != null && _args.length == 0) {
+                MetaMethod m = getMetaClass(_receiver).pickMethod(_method, new Class<?>[]{ Object.class });
+                if (m != null) {
+                    return checkedCall(_receiver, safe, spread, _method, new Object[] { null });
+                }
+            }
+
             /*
                 The third try:
 
@@ -311,24 +319,6 @@ public class Checker {
     public static Object checkedGetProperty(final Object _receiver, boolean safe, boolean spread, Object _property) throws Throwable {
         if (safe && _receiver==null)     return null;
 
-        // Support DSL style no arg methods: [1, 2].size
-        if (_receiver != null) {
-            MetaMethod m = getMetaClass(_receiver).pickMethod(_property.toString(), new Class<?>[0]);
-            if (m != null) {
-                return checkedCall(_receiver, safe, spread, _property.toString(), new Object[0]);
-            }
-        }
-
-        if (spread || (_receiver instanceof Collection && !BUILTIN_PROPERTIES.contains(_property))) {
-            List<Object> r = new ArrayList<Object>();
-            Iterator itr = InvokerHelper.asIterator(_receiver);
-            while (itr.hasNext()) {
-                Object it = itr.next();
-                if (it!=null)
-                    r.add(checkedGetProperty(it,true,false,_property));
-            }
-            return r;
-        }
 // 1st try: do the same call site stuff
 //            return fakeCallSite(property.toString()).callGetProperty(receiver);
 
@@ -352,7 +342,38 @@ public class Checker {
                 MetaClassImpl.getProperty looks for Map subtype and handles it as Map.get call,
                 so dispatch that call accordingly.
              */
-            return checkedCall(_receiver,false,false,"get",new Object[]{_property});
+            if (((Map)_receiver).containsKey(_property)) {
+                return checkedCall(_receiver, false, false, "get", new Object[]{_property});
+            }
+            // If the map doesn't have the property try to resolve to a method
+        }
+
+        // Support DSL style no arg methods: [1, 2].size
+        if (_receiver != null) {
+            MetaMethod m = getMetaClass(_receiver).pickMethod(_property.toString(), new Class<?>[0]);
+            if (m != null) {
+                return checkedCall(_receiver, safe, spread, _property.toString(), new Object[0]);
+            }
+        }
+
+        // Support GPath style access: obj.get(...)
+        if (_receiver != null) {
+            MetaMethod m = getMetaClass(_receiver).pickMethod("get", new Class<?>[]{ String.class });
+            if (m != null) {
+                return checkedCall(_receiver, safe, spread, "get", new Object[] { _property });
+            }
+        }
+
+        // If no method was found, try to use spreads
+        if (spread || (_receiver instanceof Collection && !BUILTIN_PROPERTIES.contains(_property))) {
+            List<Object> r = new ArrayList<Object>();
+            Iterator itr = InvokerHelper.asIterator(_receiver);
+            while (itr.hasNext()) {
+                Object it = itr.next();
+                if (it!=null)
+                    r.add(checkedGetProperty(it,true,false,_property));
+            }
+            return r;
         }
 
         return new ZeroArgInvokerChain(_receiver) {
