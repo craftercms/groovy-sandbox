@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static org.codehaus.groovy.runtime.InvokerHelper.getMetaClass;
+import static org.codehaus.groovy.runtime.MetaClassHelper.capitalize;
 import static org.codehaus.groovy.runtime.MetaClassHelper.convertToTypeArray;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import static org.kohsuke.groovy.sandbox.impl.ClosureSupport.BUILTIN_PROPERTIES;
@@ -144,9 +145,13 @@ public class Checker {
 
             // Support special one arg methods: obj.test() == obj.test(null)
             if (_receiver != null && _args.length == 0) {
-                MetaMethod m = getMetaClass(_receiver).pickMethod(_method, new Class<?>[]{ Object.class });
-                if (m != null) {
-                    return checkedCall(_receiver, safe, spread, _method, new Object[] { null });
+                MetaMethod m = getMetaClass(_receiver).pickMethod(_method, new Class<?>[0]);
+                // if the original method does not exist, try the one arg version
+                if (m == null || m.getParameterTypes().length != 0) {
+                    m = getMetaClass(_receiver).pickMethod(_method, new Class<?>[]{Object.class});
+                    if (m != null) {
+                        return checkedCall(_receiver, safe, spread, _method, new Object[]{null});
+                    }
                 }
             }
 
@@ -348,19 +353,20 @@ public class Checker {
             // If the map doesn't have the property try to resolve to a method
         }
 
-        // Support DSL style no arg methods: [1, 2].size
-        if (_receiver != null) {
+        // support for special methods
+        if (_receiver != null &&
+                getMetaClass(_receiver).pickMethod("get" + capitalize(_property.toString()), new Class<?>[0]) == null &&
+                getMetaClass(_receiver).pickMethod("is" + capitalize(_property.toString()), new Class<?>[0]) == null) {
+            // Support DSL style no arg methods: [1, 2].size
             MetaMethod m = getMetaClass(_receiver).pickMethod(_property.toString(), new Class<?>[0]);
             if (m != null) {
                 return checkedCall(_receiver, safe, spread, _property.toString(), new Object[0]);
             }
-        }
 
-        // Support GPath style access: obj.get(...)
-        if (_receiver != null) {
-            MetaMethod m = getMetaClass(_receiver).pickMethod("get", new Class<?>[]{ String.class });
+            // Support GPath style access: obj.get(...)
+            m = getMetaClass(_receiver).pickMethod("get", new Class<?>[]{String.class});
             if (m != null) {
-                return checkedCall(_receiver, safe, spread, "get", new Object[] { _property });
+                return checkedCall(_receiver, safe, spread, "get", new Object[]{_property});
             }
         }
 
