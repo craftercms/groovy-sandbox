@@ -356,7 +356,9 @@ public class Checker {
         // support for special methods
         if (_receiver != null &&
                 getMetaClass(_receiver).pickMethod("get" + capitalize(_property.toString()), new Class<?>[0]) == null &&
-                getMetaClass(_receiver).pickMethod("is" + capitalize(_property.toString()), new Class<?>[0]) == null) {
+                getMetaClass(_receiver).pickMethod("is" + capitalize(_property.toString()), new Class<?>[0]) == null &&
+                (getMetaClass(_receiver).getMetaProperty(_property.toString()) == null ||
+                 getMetaClass(_receiver).getMetaProperty(_property.toString()).getModifiers() == Modifier.PRIVATE)) {
             // Support DSL style no arg methods: [1, 2].size
             MetaMethod m = getMetaClass(_receiver).pickMethod(_property.toString(), new Class<?>[0]);
             if (m != null) {
