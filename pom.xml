@@ -3,16 +3,11 @@
 
   <groupId>org.craftercms</groupId>
   <artifactId>groovy-sandbox</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>3.2.0-SNAPSHOT</version><!-- craftercms version flag -->
 
   <name>Groovy Sandbox</name>
   <description>Executes untrusted Groovy script safely</description>
   <url>https://github.com/craftercms/groovy-sandbox</url>
-
-  <organization>
-    <name>CrafterCMS</name>
-    <url>http://craftercms.org</url>
-  </organization>
 
   <licenses>
     <license>
@@ -21,14 +16,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <developers>
-    <developer>
-      <id>sumerjabri</id>
-      <name>Sumer Jabri</name>
-      <email>sumer.jabri@craftercms.org</email>
-    </developer>
-  </developers>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -134,11 +121,22 @@
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.craftercms</groupId>
+        <artifactId>craftercms</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>2.4.15</version> <!-- Updated to use the same as Engine -->
       <scope>provided</scope> <!-- Updated to avoid exclusions in other places -->
     </dependency>
     <dependency>
