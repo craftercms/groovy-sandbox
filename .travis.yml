@@ -16,7 +16,7 @@ notifications:
 script:
 - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then bash -c  "mvn -DskipTests deploy
   --settings .travis-settings.xml";  fi
-- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn DskipTests clean install"
+- if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then bash -c "mvn -DskipTests clean install"
   ;fi
 env:
   global:
