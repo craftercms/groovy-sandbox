@@ -2,9 +2,10 @@ package org.kohsuke.groovy.sandbox;
 
 import org.kohsuke.groovy.sandbox.impl.Super;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * Interceptor of Groovy method calls.
@@ -192,33 +193,45 @@ public abstract class GroovyInterceptor {
      * Registers this interceptor to the current thread's interceptor list.
      */
     public void register() {
-        threadInterceptors.get().add(this);
+        if (threadInterceptor.get() == null) {
+            threadInterceptor.set(this);
+        }
     }
 
     /**
      * Reverses the earlier effect of {@link #register()}
      */
     public void unregister() {
-        threadInterceptors.get().remove(this);
+        threadInterceptor.remove();
     }
 
-    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptors = new ThreadLocal<List<GroovyInterceptor>>() {
-        @Override
-        protected List<GroovyInterceptor> initialValue() {
-            return new CopyOnWriteArrayList<GroovyInterceptor>();
-        }
-    };
+    private static final InheritableThreadLocal<GroovyInterceptor> threadInterceptor = new InheritableThreadLocal<>();
 
-    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptorsView = new ThreadLocal<List<GroovyInterceptor>>() {
-        @Override
-        protected List<GroovyInterceptor> initialValue() {
-            return Collections.unmodifiableList(threadInterceptors.get());
-        }
-    };
+//
+//    The original approach with a list was causing a race condition in which the only existing interceptor was being
+//    repeated, so it has been replaced with a single reference.
+
+//    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptors = new ThreadLocal<List<GroovyInterceptor>>() {
+//        @Override
+//        protected List<GroovyInterceptor> initialValue() {
+//            return new CopyOnWriteArrayList<GroovyInterceptor>();
+//        }
+//    };
+//
+//    private static final ThreadLocal<List<GroovyInterceptor>> threadInterceptorsView = new ThreadLocal<List<GroovyInterceptor>>() {
+//        @Override
+//        protected List<GroovyInterceptor> initialValue() {
+//            return Collections.unmodifiableList(threadInterceptors.get());
+//        }
+//    };
     
 //    private static final List<GroovyInterceptor> globalInterceptors = new CopyOnWriteArrayList<GroovyInterceptor>();
     
     public static List<GroovyInterceptor> getApplicableInterceptors() {
-        return threadInterceptorsView.get();
+        if (threadInterceptor.get() != null) {
+            return singletonList(threadInterceptor.get());
+        } else {
+            return emptyList();
+        }
     }
 }
