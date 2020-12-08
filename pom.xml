@@ -32,7 +32,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.27.4</revision>
+    <revision>1.27.5</revision>
     <changelist></changelist>
     <!-- TODO: Move these three properties to the parent POM or use org.jenkins-ci:jenkins as the parent POM here -->
     <incrementals-enforce-minimum.version>1.1</incrementals-enforce-minimum.version>
@@ -144,7 +144,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
