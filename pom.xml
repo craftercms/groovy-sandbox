@@ -32,7 +32,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.27.5</revision>
+    <revision>1.27.6</revision>
     <changelist></changelist>
     <!-- TODO: Move these three properties to the parent POM or use org.jenkins-ci:jenkins as the parent POM here -->
     <incrementals-enforce-minimum.version>1.1</incrementals-enforce-minimum.version>
@@ -138,7 +138,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>2.4.15</version> <!-- Updated to use the same as Engine -->
+      <version>2.4.19</version> <!-- Updated to use the same as Engine -->
       <scope>provided</scope> <!-- Updated to avoid exclusions in other places -->
     </dependency>
     <dependency>
