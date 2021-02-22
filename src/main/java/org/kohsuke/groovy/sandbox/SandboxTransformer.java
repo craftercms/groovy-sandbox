@@ -37,6 +37,7 @@ import org.codehaus.groovy.ast.expr.MethodPointerExpression;
 import org.codehaus.groovy.ast.expr.PostfixExpression;
 import org.codehaus.groovy.ast.expr.PrefixExpression;
 import org.codehaus.groovy.ast.expr.PropertyExpression;
+import org.codehaus.groovy.ast.expr.SpreadExpression;
 import org.codehaus.groovy.ast.expr.StaticMethodCallExpression;
 import org.codehaus.groovy.ast.expr.TupleExpression;
 import org.codehaus.groovy.classgen.GeneratorContext;
@@ -315,7 +316,9 @@ public class SandboxTransformer extends CompilationCustomizer {
                 List<Expression> cwArgs = new ArrayList<>();
                 int x = 0;
                 for (Expression constructorCallArg : constructorCallArgs) {
-                    cwArgs.add(/*new CastExpression(superArg.getType(), */new MethodCallExpression(new VariableExpression("$cw"), "arg", new ConstantExpression(x++))/*)*/);
+                    // Use the original constructor args instead of getting the values from the wrapper
+                    // cwArgs.add(/*new CastExpression(superArg.getType(), */new MethodCallExpression(new VariableExpression("$cw"), "arg", new ConstantExpression(x++))/*)*/);
+                    cwArgs.add(constructorCallArg);
                 }
                 List<Statement> body2 = new ArrayList<>(body.size() + 1);
                 body2.add(0, new ExpressionStatement(new ConstructorCallExpression(constructorCallType, new ArgumentListExpression(cwArgs))));
@@ -389,19 +392,28 @@ public class SandboxTransformer extends CompilationCustomizer {
          * but the signature doesn't guarantee that. So this method takes care of that.
          */
         Expression transformArguments(Expression e) {
+            boolean containsSpread = false;
             List<Expression> l;
             if (e instanceof TupleExpression) {
                 List<Expression> expressions = ((TupleExpression) e).getExpressions();
                 l = new ArrayList<>(expressions.size());
                 for (Expression expression : expressions) {
+                    containsSpread = containsSpread || expression instanceof SpreadExpression;
                     l.add(transform(expression));
                 }
             } else {
+                containsSpread = e instanceof SpreadExpression;
                 l = Collections.singletonList(transform(e));
             }
 
+            // use toArray only when needed to expand the spread operator, otherwise return a plain array directly
             // checkdCall expects an array
-            return withLoc(e,new MethodCallExpression(new ListExpression(l),"toArray",new ArgumentListExpression()));
+            if (containsSpread) {
+                return withLoc(e, new MethodCallExpression(
+                        new ListExpression(l),"toArray",new ArgumentListExpression()));
+            } else {
+                return withLoc(e, new ArrayExpression(new ClassNode(Object.class), l));
+            }
         }
         
         Expression makeCheckedCall(String name, Expression... arguments) {
