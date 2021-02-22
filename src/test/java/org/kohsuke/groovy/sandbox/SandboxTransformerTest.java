@@ -413,21 +413,22 @@ public class SandboxTransformerTest {
                         "Expected to invoke synthetic constructor: private S(org.kohsuke.groovy.sandbox.impl.Checker$SuperConstructorWrapper,java.lang.Object)")));
     }
 
+    // Changed name "var" because it is a reserved keyword in Groovy 3
     @Issue("SECURITY-1754")
     @Test public void localVarsInIfStatementsAreNotInScopeInElseStatements() throws Exception {
         sandboxedEval(
                 "class Super { }\n" +
                 "class Sub extends Super {\n" +
-                "  def var\n" +
+                "  def v\n" +
                 "  Sub() {\n" +
                 "    if (false)\n" +  // Intentionally not using braces for the body.
                 "      def $cw\n" + // The name of the parameter for constructor wrappers added by `SandboxTransformer.processConstructors()`.
                 "    else {\n" +
-                "      this.var = $cw\n" +
+                "      this.v = $cw\n" +
                 "    }\n" +
                 "  }\n" +
                 "}\n" +
-                "new Sub().var\n",
+                "new Sub().v\n",
                 ShouldFail.class, // Previously, would have been an instance of Checker.SuperConstructorWrapper.
                 e -> assertThat(e.getMessage(), containsString("No such property: $cw for class: Sub")));
     }
