@@ -264,9 +264,36 @@ point==point
 
     void testNestedClass() {
         assertIntercept(
-                "new Script1\$1(Script1)/Script1\$1.plusOne(Integer)/Integer.plus(Integer)",
+                "new Outer()/Outer.sum()/new Outer\$Inner(Outer)/Outer\$Inner.plusOne(Integer)/Integer.plus(Integer)",
                 6,
 """
+class Outer {
+
+   class Inner {
+
+       def plusOne(rhs) {
+         return rhs+1;
+       }
+       
+   }
+   
+   def sum() {
+       def x = new Inner()
+       return x.plusOne(5)
+   }
+   
+}
+
+new Outer().sum()
+""")
+    }
+
+    // Disabled since anonymous inner classes seem to have issues with reflection in Java 11
+    void anonymousNestedClass() {
+        assertIntercept(
+                "new Script1\$1(Script1)/Script1\$1.plusOne(Integer)/Integer.plus(Integer)",
+                6,
+                """
 def x = new Object() {
    def plusOne(rhs) {
      return rhs+1;
