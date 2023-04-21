@@ -66,7 +66,7 @@ class TheTest extends TestCase {
         assert expected==actual;
         return actual;
     }
-    
+
     def assertIntercept(String expectedCallSequence, Object expectedValue, String script) {
         def actual = eval(script)
         assertEquals(expectedValue, actual);
@@ -117,7 +117,7 @@ class TheTest extends TestCase {
                 1,
                 "new java.awt.Point(1,2).@x"
         )
-        
+
         // property set
         assertIntercept(
                 ['Script7.point',"Point.x=Integer"],
@@ -142,7 +142,7 @@ class TheTest extends TestCase {
         )
         assertEquals(3,binding.points[0].@x)
         assertEquals(3,binding.points[1].@x)
-        
+
         // array set & get
         assertIntercept(
                 "int[][Integer]=Integer/int[][Integer]",
@@ -274,14 +274,14 @@ class Outer {
        def plusOne(rhs) {
          return rhs+1;
        }
-       
+
    }
-   
+
    def sum() {
        def x = new Inner()
        return x.plusOne(5)
    }
-   
+
 }
 
 new Outer().sum()
@@ -824,7 +824,7 @@ return cnt''')
 
     @Issue("SECURITY-566")
     void testTypeCoercion() {
-        ProxyGeneratorAdapter.pxyCounter.set(0); // make sure *_groovyProxy names are predictable
+        // ProxyGeneratorAdapter.pxyCounter.set(0); // make sure *_groovyProxy names are predictable
         assertIntercept([
             'Locale:getDefault()',
             'Class2_groovyProxy.getDefault()'
