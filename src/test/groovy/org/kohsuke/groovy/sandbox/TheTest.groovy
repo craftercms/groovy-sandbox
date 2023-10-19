@@ -824,7 +824,7 @@ return cnt''')
 
     @Issue("SECURITY-566")
     void testTypeCoercion() {
-        ProxyGeneratorAdapter.pxyCounter.set(0); // make sure *_groovyProxy names are predictable
+//        ProxyGeneratorAdapter.pxyCounter.set(0); // make sure *_groovyProxy names are predictable
         assertIntercept([
             'Locale:getDefault()',
             'Class2_groovyProxy.getDefault()'

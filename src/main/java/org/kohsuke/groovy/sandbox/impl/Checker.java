@@ -233,7 +233,7 @@ public class Checker {
                 } else {
                     try {
                         MetaClass mc = InvokerHelper.getMetaClass(s.receiver.getClass());
-                        return mc.invokeMethod(s.senderType.getSuperclass(), s.receiver, method, args, true, true);
+                        return mc.invokeMethod(s.receiver.getClass(), s.receiver, method, args, true, true);
                     } catch (GroovyRuntimeException gre) {
                         throw ScriptBytecodeAdapter.unwrap(gre);
                     }

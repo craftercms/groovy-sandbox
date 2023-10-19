@@ -33,6 +33,9 @@ public abstract class GroovyInterceptor {
      * (that is, {@code x=Integer.class;x.valueOf(5)} results in {@code onMethodCall(invoker,Integer.class,"valueOf",5)}
      */
     public Object onStaticCall(Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
+        System.out.println(invoker);
+        System.out.println(receiver);
+        System.out.println(method);
         return invoker.call(receiver,method,args);
     }
 
