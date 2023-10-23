@@ -12,7 +12,6 @@ class NoSystemExitSandbox extends GroovyInterceptor {
     Object onStaticCall(GroovyInterceptor.Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
         if (receiver == System.class && method == "exit")
             throw new SecurityException("No call on System.exit() please");
-        println invoker
         return super.onStaticCall(invoker, receiver, method, args)
     }
 }
