@@ -59,10 +59,10 @@ class StaticMethodSelectionTest extends TestCase {
      */
     void testStrangeThirdSelection() {
         try {
-            StaticMethodSelectionTest.strangeThirdSelection(1,2)
+            StaticMethodSelectionTest.strangeThirdSelection(1, 2)
             fail();
-        } catch (IllegalArgumentException e) {
-            assert e.message.contains("argument type mismatch")
+        } catch (MissingMethodException e) {
+            assert e.message.contains("No signature of method")
         }
     }
 }
