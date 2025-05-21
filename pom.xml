@@ -53,6 +53,11 @@
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/craftercms/craftercms</url>
+		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -61,8 +66,9 @@
 			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>central-releases</id>
-			<url>https://central.sonatype.com/repository/maven-releases/</url>
+			<id>github</id>
+			<name>GitHub Maven Packages</name>
+			<url>https://maven.pkg.github.com/craftercms/craftercms</url>
 		</repository>
 	</distributionManagement>
 
@@ -310,30 +316,20 @@
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
-					<name>performRelease</name>
-					<value>true</value>
+					<name>release</name>
 				</property>
 			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
+						<artifactId>maven-javadoc-plugin</artifactId>
 					</plugin>
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -343,6 +339,16 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>${maven-deploy-plugin.version}</version>
+						<configuration>
+							<repositoryId>github</repositoryId>
+							<url>https://maven.pkg.github.com/craftercms/craftercms</url>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
