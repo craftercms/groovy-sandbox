@@ -41,7 +41,7 @@
 			<url>https://repo.jenkins-ci.org/public/</url>
 		</repository>
 		<repository>
-			<id>central-releases</id>
+			<id>central-snapshots</id>
 			<name>Central Snapshot Repository</name>
 			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 			<releases>
@@ -52,7 +52,8 @@
 				<updatePolicy>always</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-		</repository>	</repositories>
+		</repository>
+	</repositories>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -60,8 +61,9 @@
 			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>central-releases</id>
-			<url>https://central.sonatype.com/repository/maven-releases/</url>
+			<id>github</id>
+			<name>GitHub Maven Packages</name>
+			<url>https://maven.pkg.github.com/craftercms/craftercms</url>
 		</repository>
 	</distributionManagement>
 
