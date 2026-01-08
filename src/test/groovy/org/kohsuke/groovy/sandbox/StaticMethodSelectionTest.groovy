@@ -63,7 +63,7 @@ class StaticMethodSelectionTest extends TestCase {
 			StaticMethodSelectionTest.strangeThirdSelection(1, 2)
 			fail();
 		} catch (MissingMethodException e) {
-			assert e.message.contains("No signature of method")
+			assert e.message.contains("No signature of static method")
 		}
 	}
 }
