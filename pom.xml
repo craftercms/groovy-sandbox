@@ -1,36 +1,54 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.craftercms</groupId>
+	<groupId>org.openremote</groupId>
 	<artifactId>groovy-sandbox</artifactId>
+	<version>${revision}${changelist}</version>
+	<packaging>jar</packaging>
 
 	<name>Groovy Sandbox</name>
 	<description>Executes untrusted Groovy script safely</description>
-	<url>https://github.com/craftercms/groovy-sandbox</url>
+	<url>https://github.com/openremote/groovy-sandbox</url>
+
+	<organization>
+		<name>OpenRemote</name>
+		<url>https://openremote.io/</url>
+	</organization>
 
 	<licenses>
 		<license>
-			<name>MIT license</name>
-			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<name>MIT License</name>
+			<url>https://opensource.org/license/mit/</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
 
-	<parent>
-		<groupId>org.craftercms</groupId>
-		<artifactId>craftercms</artifactId>
-		<version>5.0.0-SNAPSHOT</version><!-- craftercms version flag -->
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+	<scm>
+		<connection>scm:git:https://github.com/openremote/groovy-sandbox.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/openremote/groovy-sandbox.git</developerConnection>
+		<url>https://github.com/openremote/groovy-sandbox</url>
+		<tag>${scmTag}</tag>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<revision>1.27.6</revision>
-		<changelist></changelist>
+		<changelist>-SNAPSHOT</changelist>
 		<scmTag>HEAD</scmTag>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
+		<java.version>21</java.version>
+		<groovy.version>5.0.6</groovy.version>
+		<junit.version>4.13.2</junit.version>
+		<jenkins-test-annotations.version>1.5</jenkins-test-annotations.version>
+		<gmavenplus-plugin.version>5.0.0</gmavenplus-plugin.version>
+		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+		<maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+		<maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+		<maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+		<maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
+		<maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+		<maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
 	</properties>
 
 	<repositories>
@@ -38,53 +56,72 @@
 			<id>repo.jenkins-ci.org</id>
 			<url>https://repo.jenkins-ci.org/public/</url>
 		</repository>
-		<repository>
-			<id>central-snapshots</id>
-			<name>Central Snapshot Repository</name>
-			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-		</repository>
 	</repositories>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>central-snapshots</id>
-			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>github</id>
-			<name>GitHub Maven Packages</name>
-			<url>https://maven.pkg.github.com/craftercms/craftercms</url>
-		</repository>
-	</distributionManagement>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>repo.jenkins-ci.org</id>
-			<url>https://repo.jenkins-ci.org/public/</url>
-		</pluginRepository>
-	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>${groovy.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci</groupId>
+			<artifactId>test-annotations</artifactId>
+			<version>${jenkins-test-annotations.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-checkstyle-plugin.version}</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<configLocation>checkstyle.xml</configLocation>
+				</configuration>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<release>${java.version}</release>
+					<parameters>true</parameters>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
+				<version>${gmavenplus-plugin.version}</version>
+				<configuration>
+					<targetBytecode>${java.version}</targetBytecode>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -110,6 +147,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -119,96 +157,34 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			</plugin>
 		</plugins>
 	</build>
-
-	<!--	<dependencyManagement>-->
-	<!--		<dependencies>-->
-	<!--			<dependency>-->
-	<!--				<groupId>org.craftercms</groupId>-->
-	<!--				<artifactId>craftercms</artifactId>-->
-	<!--				<type>pom</type>-->
-	<!--				<scope>import</scope>-->
-	<!--			</dependency>-->
-	<!--		</dependencies>-->
-	<!--	</dependencyManagement>-->
-
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<scope>provided</scope> <!-- Updated to avoid exclusions in other places -->
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jenkins-ci</groupId>
-			<artifactId>test-annotations</artifactId>
-			<version>1.5</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<scm>
-		<connection>scm:git:git@github.com/jenkinsci/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}.git
-		</developerConnection>
-		<url>http://${project.artifactId}.kohsuke.org/</url>
-		<tag>${scmTag}</tag>
-	</scm>
 
 	<reporting>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</reporting>
-
-	<profiles>
-		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
