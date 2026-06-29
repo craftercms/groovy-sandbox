@@ -1,64 +1,128 @@
-groovy-sandbox
-==============
+# OpenRemote Groovy Sandbox
 
-Compile-time transformer to run Groovy code in a restrictive sandbox. Executes untrusted Groovy script safely.
+This repository is an OpenRemote-maintained fork of
+[`craftercms/groovy-sandbox`](https://github.com/craftercms/groovy-sandbox),
+which itself derives from the original
+[`jenkinsci/groovy-sandbox`](https://github.com/jenkinsci/groovy-sandbox)
+project.
 
-[Documentation](http://groovy-sandbox.kohsuke.org/).
+The library provides a Groovy compile-time transformer that rewrites script
+operations so they can be intercepted by application code. OpenRemote uses this
+as part of its Groovy rules hardening work.
 
-#### Maven dependency
+The Java package name remains `org.kohsuke.groovy.sandbox` for compatibility
+with existing consumers, including OpenRemote code that imports classes such as
+`org.kohsuke.groovy.sandbox.SandboxTransformer`.
+
+## Fork Status
+
+Current baseline:
+
+- Forked from `craftercms/groovy-sandbox` `develop` at commit `97360e2`.
+- Maven coordinates changed to `org.openremote:groovy-sandbox`.
+- Java package names kept unchanged for API compatibility.
+- Java 21 and Groovy 5 are the current build targets.
+
+Relevant security and correctness fixes from `jenkinsci/groovy-sandbox` should
+be documented here as they are manually ported into this fork. This fork should
+not blindly cherry-pick Jenkins build, release, plugin, or CI metadata.
+
+## Maven Coordinates
+
+The Maven coordinates for this fork are:
 
 ```xml
 <dependency>
-    <groupId>org.kohsuke</groupId>
+    <groupId>org.openremote</groupId>
     <artifactId>groovy-sandbox</artifactId>
-    <version>1.25</version>
+    <version>1.27.6-SNAPSHOT</version>
 </dependency>
 ```
 
-Starting with version 1.20, this artifact is only published to the Jenkins Releases repository, not to Maven Central as was done previously. Here are the details for the Jenkins Releases repository:
+Publishing targets are intentionally not configured in this repository yet.
+Snapshots should be published only after OpenRemote has validated the fork
+against its own rules tests.
 
-```xml
-<repository>
-  <id>jenkins-releases</id>
-  <name>Jenkins Releases</name>
-  <url>https://repo.jenkins-ci.org/releases/</url>
-</repository>
+## Build
+
+Requirements:
+
+- Java 21
+- Maven 3.9 or newer
+
+Run the test suite:
+
+```sh
+mvn -B test
 ```
 
-#### Usage
+Build the jar, test jar, and sources jar:
 
-A good example can be found [here](https://github.com/jenkinsci/groovy-sandbox/tree/master/src/test/groovy/org/kohsuke/groovy/sandbox/robot).
-This is a simple test that always expects a `SecurityException`:
+```sh
+mvn -B package
+```
+
+The current POM pins Groovy to `5.0.6`.
+
+## Basic Usage
+
+Add `SandboxTransformer` to a `CompilerConfiguration` before compiling the
+Groovy script:
 
 ```groovy
-class Test {
-    static class DenyAll extends GroovyValueFilter {
-        Object filter(Object o) { throw new SecurityException('Denied!') }
+def cc = new CompilerConfiguration()
+cc.addCompilationCustomizers(new SandboxTransformer())
+
+def shell = new GroovyShell(new Binding(), cc)
+```
+
+Register an interceptor around script execution:
+
+```groovy
+def sandbox = new GroovyValueFilter() {
+    Object filter(Object value) {
+        throw new SecurityException("Denied")
     }
-    @Test(expected = SecurityException)
-    void testScript() {
-        final sh = new GroovyShell(new CompilerConfiguration()
-                .addCompilationCustomizers(new SandboxTransformer()))
-        new DenyAll().register()
-        sh.evaluate('println hi')
-    }
+}
+
+sandbox.register()
+try {
+    shell.evaluate("println 'hello'")
+} finally {
+    sandbox.unregister()
 }
 ```
 
-# Community
+See `src/test/groovy/org/kohsuke/groovy/sandbox/robot` for an allowlist-style
+example that permits selected application objects and rejects everything else.
 
-## Contributors
+## Security Model
 
-https://github.com/craftercms/craftercms/blob/develop/CONTRIBUTORS.md
+This library is defense in depth. It is not a complete JVM security boundary by
+itself.
 
-## Code of Conduct
+Important constraints:
 
-https://github.com/craftercms/craftercms/blob/develop/CODE_OF_CONDUCT.md
+- Interceptors are thread-specific. Scripts must not be allowed to create or
+  control threads or executor services that run outside the registered
+  interceptor context.
+- Use an allowlist model. Blocking a known-dangerous method is not enough
+  because another allowed method may call it internally.
+- Reflection, class loading, process execution, filesystem access, networking,
+  and Groovy dynamic hooks need explicit policy decisions.
+- OpenRemote should combine this transformer with compiler restrictions,
+  narrow rule DSL facades, and runtime containment before enabling untrusted
+  Groovy authoring.
 
-## Contributing
+For OpenRemote, this means non-superuser Groovy rule editing should remain
+disabled until this fork has a tested allowlist and OpenRemote has additional
+runtime containment.
 
-https://github.com/craftercms/craftercms/blob/develop/CONTRIBUTING.md
+## License And Attribution
 
-## Git Workflow
+This project remains licensed under the MIT License. Keep the upstream license
+text and attribution intact.
 
-https://github.com/craftercms/craftercms/blob/develop/GIT_WORKFLOW.md
+OpenRemote-specific changes should be documented in this repository without
+removing existing Kohsuke Kawaguchi, CloudBees, Jenkins, CrafterCMS, or other
+upstream contributor attribution.
