@@ -1,0 +1,62 @@
+name: CI/CD
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up JDK 21 and Maven cache
+        uses: actions/setup-java@1bcf9fb12cf4aa7d266a90ae39939e61372fe520 # v5.4.0
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "maven"
+
+      - name: Build and run tests
+        run: mvn -B -ntp verify
+
+      - name: Verify license metadata
+        shell: bash
+        run: |
+          artifact="$(find target -maxdepth 1 -name 'groovy-sandbox-*.jar' ! -name '*-sources.jar' ! -name '*-tests.jar' | head -n 1)"
+
+          if [[ -z "$artifact" ]]; then
+            echo "::error::Main jar artifact was not produced"
+            exit 1
+          fi
+
+          jar tf "$artifact" | grep -Fx 'META-INF/LICENSE.md'
+          jar tf "$artifact" | grep -Fx 'META-INF/LICENSE-MIT.md'
+          jar tf "$artifact" | grep -Fx 'META-INF/NOTICE.md'
+
+      - name: Archive test reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: maven-test-reports
+          path: target/surefire-reports/
+          if-no-files-found: ignore
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: groovy-sandbox-artifacts
+          path: target/*.jar
+          if-no-files-found: error
