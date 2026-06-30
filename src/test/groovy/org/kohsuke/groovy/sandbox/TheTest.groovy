@@ -3,7 +3,6 @@ package org.kohsuke.groovy.sandbox
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.codehaus.groovy.runtime.NullObject
 import org.codehaus.groovy.runtime.ProxyGeneratorAdapter
-import org.jvnet.hudson.test.Issue
 import java.awt.Point
 import junit.framework.TestCase
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -580,7 +579,7 @@ Exception.message
         """)
 	}
 
-	@Issue("JENKINS-46088")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-46088.
 	void testMatcherTypeAssignment() {
 		assertIntercept(
 			[
@@ -777,7 +776,7 @@ Exception.message
 	/**
 	 * Intercepts super.toString()
 	 */
-	@Issue("JENKINS-42563")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-42563.
 	void testSuperCall() {
 		assertIntercept([
 			"new Zot()",
@@ -822,7 +821,7 @@ Exception.message
 return cnt''')
 	}
 
-	@Issue("SECURITY-566")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-566.
 	void testTypeCoercion() {
 		// TODO: Check the following line
 //        ProxyGeneratorAdapter.pxyCounter.set(0); // make sure *_groovyProxy names are predictable
@@ -837,7 +836,7 @@ return cnt''')
         ''')
 	}
 
-	@Issue("JENKINS-33468")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-33468.
 	void testClosureImplicitIt() {
 		assertIntercept([
 			'Script1.c=Script1$_run_closure1',
@@ -869,7 +868,7 @@ return cnt''')
 		)
 	}
 
-	@Issue("JENKINS-46191")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-46191.
 	void testEmptyDeclaration() {
 		assertIntercept([""],
 			"abc",
@@ -880,7 +879,7 @@ return a
 ''')
 	}
 
-	@Issue("SECURITY-663")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-663.
 	void testAsFile() {
 		File f = File.createTempFile("foo", ".tmp")
 
@@ -898,7 +897,7 @@ s.join(' ')
 """)
 	}
 
-	@Issue("JENKINS-50380")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-50380.
 	void testCheckedCastWhenAssignable() {
 		assertIntercept(['new NonArrayConstructorList(Boolean,Boolean)',
 				 'NonArrayConstructorList.join(String)'],
@@ -910,7 +909,7 @@ return castFoo.join('')
 ''')
 	}
 
-	@Issue("JENKINS-50470")
+	// Regression test for https://issues.jenkins.io/browse/JENKINS-50470.
 	void testCollectionGetProperty() {
 		assertIntercept(['new SimpleNamedBean(String)',
 				 'new SimpleNamedBean(String)',

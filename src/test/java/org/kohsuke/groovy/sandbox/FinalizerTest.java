@@ -30,7 +30,6 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.junit.Before;
 import org.junit.Test;
-import org.jvnet.hudson.test.Issue;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -39,7 +38,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-@Issue("SECURITY-1186")
+// Regression test for https://issues.jenkins.io/browse/SECURITY-1186.
 public class FinalizerTest {
 	private static final String SCRIPT_HARNESS =
 		"class Global {\n" +

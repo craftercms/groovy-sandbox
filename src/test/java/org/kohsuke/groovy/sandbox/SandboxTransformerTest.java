@@ -39,7 +39,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.jvnet.hudson.test.Issue;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -140,7 +139,7 @@ public class SandboxTransformerTest {
 		ec.checkThat(cr.toString().split("\n"), equalTo(expectedCalls));
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxTransformsMethodPointerLhs() throws Exception {
 		assertIntercept(
@@ -155,7 +154,7 @@ public class SandboxTransformerTest {
 			"Integer.toString()");
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxTransformsMethodPointerRhs() throws Exception {
 		try {
@@ -171,7 +170,7 @@ public class SandboxTransformerTest {
 		}
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxWillNotCastNonStandardCollections() throws Exception {
 		// Note: If you run this test in a debugger and inspect the proxied closure in Checker#preCheckedCast, the test
@@ -201,7 +200,7 @@ public class SandboxTransformerTest {
 			});
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxWillNotCastNonStandardCollectionsEvenIfHarmless() throws Exception {
 		// Not problematic even before the fix because it is consistent, but there is no good way to differentiate
@@ -213,7 +212,7 @@ public class SandboxTransformerTest {
 		});
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxWillCastStandardCollections() throws Exception {
 		Path secret = Paths.get("secret.txt");
@@ -250,7 +249,7 @@ public class SandboxTransformerTest {
 		}
 	}
 
-	@Issue("SECURITY-1465")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1465.
 	@Test
 	public void sandboxInterceptsEnumClassToArrayCasts() throws Exception {
 		assertIntercept(
@@ -265,7 +264,7 @@ public class SandboxTransformerTest {
 			"Class.DAYS");
 	}
 
-	@Issue("SECURITY-1538")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1538.
 	@Test
 	public void sandboxTransformsMethodNameInMethodCalls() throws Exception {
 		assertIntercept(
@@ -276,7 +275,7 @@ public class SandboxTransformerTest {
 			"Integer.toString()");
 	}
 
-	@Issue("SECURITY-1538")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1538.
 	@Test
 	public void sandboxTransformsPropertyNameInLhsOfAssignmentOps() throws Exception {
 		assertIntercept(
@@ -297,7 +296,7 @@ public class SandboxTransformerTest {
 			"Test.x");
 	}
 
-	@Issue("SECURITY-1538")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1538.
 	@Test
 	public void sandboxTransformsPropertyNameInPrefixPostfixOps() throws Exception {
 		assertIntercept(
@@ -320,7 +319,7 @@ public class SandboxTransformerTest {
 			"Test.x");
 	}
 
-	@Issue("SECURITY-1538")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1538.
 	@Test
 	public void sandboxTransformsComplexExpressionsInPrefixOps() throws Exception {
 		assertIntercept(
@@ -331,7 +330,7 @@ public class SandboxTransformerTest {
 			"Integer.next()");
 	}
 
-	@Issue("SECURITY-1538")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1538.
 	@Test
 	public void sandboxTransformsComplexExpressionsInPostfixOps() throws Exception {
 		assertIntercept(
@@ -360,7 +359,7 @@ public class SandboxTransformerTest {
 			"new B()");
 	}
 
-	@Issue("SECURITY-1658")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1658.
 	@Test
 	public void sandboxTransformsInitialExpressionsForClosureParameters() throws Exception {
 		assertIntercept(
@@ -370,7 +369,7 @@ public class SandboxTransformerTest {
 			"System:getProperties()");
 	}
 
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void interceptThisConstructorCalls() throws Exception {
 		assertIntercept(
@@ -387,7 +386,7 @@ public class SandboxTransformerTest {
 			"new Superclass()");
 	}
 
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void blocksDirectCallsToSyntheticConstructors() throws Exception {
 		sandboxedEval(
@@ -402,7 +401,7 @@ public class SandboxTransformerTest {
 					"Perhaps you meant to use one of these constructors instead: public Subclass()")));
 	}
 
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void blocksCallsToSyntheticConstructorsViaOtherConstructors() throws Exception {
 		sandboxedEval(
@@ -418,7 +417,7 @@ public class SandboxTransformerTest {
 					"Perhaps you meant to use one of these constructors instead: public Subclass(), public Subclass(int,int)")));
 	}
 
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void blocksUnintendedCallsToNonSyntheticConstructors() throws Exception {
 		sandboxedEval(
@@ -437,7 +436,7 @@ public class SandboxTransformerTest {
 	}
 
 	// Changed name "var" because it is a reserved keyword in Groovy 3
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void localVarsInIfStatementsAreNotInScopeInElseStatements() throws Exception {
 		sandboxedEval(
@@ -457,7 +456,7 @@ public class SandboxTransformerTest {
 			e -> assertThat(e.getMessage(), containsString("No such property: $cw for class: Sub")));
 	}
 
-	@Issue("SECURITY-1754")
+	// Regression test for https://issues.jenkins.io/browse/SECURITY-1754.
 	@Test
 	public void statementsInSyntheticConstructorsAreScopedCorrectly() throws Exception {
 		assertIntercept(

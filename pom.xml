@@ -40,7 +40,6 @@
 		<java.version>21</java.version>
 		<groovy.version>5.0.6</groovy.version>
 		<junit.version>4.13.2</junit.version>
-		<jenkins-test-annotations.version>1.5</jenkins-test-annotations.version>
 		<gmavenplus-plugin.version>5.0.0</gmavenplus-plugin.version>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
 		<maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -50,13 +49,6 @@
 		<maven-source-plugin.version>3.4.0</maven-source-plugin.version>
 		<maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>repo.jenkins-ci.org</id>
-			<url>https://repo.jenkins-ci.org/public/</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -69,12 +61,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jenkins-ci</groupId>
-			<artifactId>test-annotations</artifactId>
-			<version>${jenkins-test-annotations.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
