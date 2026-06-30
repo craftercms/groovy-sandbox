@@ -18,8 +18,8 @@
 
 	<licenses>
 		<license>
-			<name>MIT License</name>
-			<url>https://opensource.org/license/mit/</url>
+			<name>GNU Affero General Public License v3.0 or later</name>
+			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -105,6 +105,28 @@
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
+				<executions>
+					<execution>
+						<id>copy-license-files</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}</directory>
+									<includes>
+										<include>LICENSE.md</include>
+										<include>LICENSE-MIT.md</include>
+										<include>NOTICE.md</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

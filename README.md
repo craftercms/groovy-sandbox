@@ -120,8 +120,13 @@ runtime containment.
 
 ## License And Attribution
 
-This project remains licensed under the MIT License. Keep the upstream license
-text and attribution intact.
+This OpenRemote fork distribution is licensed under the GNU Affero General
+Public License version 3 or later. See `LICENSE.md`.
+
+The upstream-origin code remains covered by the MIT License. The MIT license
+text and original upstream copyright notice are preserved in `LICENSE-MIT.md`.
+See `NOTICE.md` for fork attribution and OpenRemote contribution licensing
+notes.
 
 OpenRemote-specific changes should be documented in this repository without
 removing existing Kohsuke Kawaguchi, CloudBees, Jenkins, CrafterCMS, or other
